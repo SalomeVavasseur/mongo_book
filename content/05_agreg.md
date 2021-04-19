@@ -25,23 +25,21 @@ Dans cette partie, nous allons étudier **les regroupements dans les requêtes d
 
 Les requêtes de regroupement vont permettre d'effectuer des opérations d'accumulation sur des documents regroupés. Il est l'équivalent de l'opérateur GROUP BY en SQL.
 
-**exemple de requête sans regroupement**
+
 SQL
 
 SELECT SUM(att)
-
 As nb FROM t
 
 MongoDB
 
-`db.coll.aggregate([
+db.coll.aggregate([
   {$group:
-    {_id: null, 
+    {_id: null,
     nb: {$sum: "$att"}}
   }
-])`
+])
   
-**exemple de requête avec regroupement**
 
 =======
 
@@ -59,9 +57,31 @@ db.NYfood.aggregate(
 )
 
 On utilise la fonction aggregate.
+
 Lorsqu'on utilise aggregate, il faut donner les individus sur lesquels on veut faire la requête.
+
 Dans notre cas, on choisit tout les individus. On le note id: null
+
 On créé notre variable qu'on appelle nb qui va faire la somme de tout les individus.
+
+Pour sélectionner certains individus, il faut filtrer sur l'id.
+
+Sur la base de NYfood, on peut notamment filtrer par quartier.
+
+Voici un exemple de requête :
+
+db.NYfood.aggregate(
+[
+  {$group:
+    {
+    _id: "$borough",
+    nb: {$sum: 1}
+    }
+  }
+]
+)
+
+Dans cette requête, Mongodb va compter pour chaque groupe, le nombre d'individu ayant le même id et donc compter les restaurants d'un même quartiers ensemble.
 
  Le fichier que vous devez modifier pour ce chapitre est `mongo_book/content/05_agreg.md`.
 
